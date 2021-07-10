@@ -1,3 +1,4 @@
 region  = "us-east-1"
-prod_prefix = "prod"
-dev_prefix  = "dev"
+group_name="dev-ci-group"
+role_name="dev-ci-role"
+policy_name="dev-ci-policy"
