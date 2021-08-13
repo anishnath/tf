@@ -1,7 +1,7 @@
 resource "aws_security_group" "this" {
   name        = "Test"
   description = "Test"
-  vpc_id      = "vpc-17ba956d"
+  vpc_id      = "vpc-17ba9"
   tags        = var.tags
 
   //revoke_rules_on_delete = var.revoke_rules_on_delete
@@ -109,7 +109,7 @@ variable "egress_rules" {
           to_port     = 23
           protocol    = "tcp"
           cidr_block  = []
-          security_groups  = ["sg-00343d2cfe86002e2"]
+          security_groups  = ["sg-00343"]
           description = "test"
         },
 
@@ -121,7 +121,7 @@ variable "tags" {
   description = "A mapping of tags to assign to security group"
   type        = map(string)
   default     = {
-    "name" : "ANish-SG",
+    "Name" : "anish-tt",
     "test" : "anish"
 
   }
