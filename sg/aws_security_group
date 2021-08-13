@@ -1,22 +1,21 @@
-
 resource "aws_security_group" "this" {
   name        = "Test"
   description = "Test"
-  vpc_id      = "vpc-17ba956d"
-  //tags        = []
+  vpc_id      = "vpc-1111"
+  tags        = var.tags
 
   //revoke_rules_on_delete = var.revoke_rules_on_delete
 
   dynamic "ingress" {
     for_each = var.ingress_rules
     content {
-      cidr_blocks      = lookup(ingress.value, "cidr_blocks", null)
+      cidr_blocks      = lookup(ingress.value, "cidr_block", [])
       description      = lookup(ingress.value, "description", null)
       from_port        = lookup(ingress.value, "from_port", null)
       ipv6_cidr_blocks = lookup(ingress.value, "ipv6_cidr_blocks", null)
       prefix_list_ids  = lookup(ingress.value, "prefix_list_ids", null)
       protocol         = lookup(ingress.value, "protocol", null)
-      security_groups  = lookup(ingress.value, "security_groups", null)
+      security_groups  = lookup(ingress.value, "security_groups", [])
       self             = lookup(ingress.value, "self", null)
       to_port          = lookup(ingress.value, "to_port", null)
     }
@@ -25,7 +24,7 @@ resource "aws_security_group" "this" {
   dynamic "egress" {
     for_each = var.egress_rules
     content {
-      cidr_blocks      = lookup(egress.value, "cidr_blocks", null)
+      cidr_blocks      = lookup(egress.value, "cidr_block", null)
       description      = lookup(egress.value, "description", null)
       from_port        = lookup(egress.value, "from_port", null)
       ipv6_cidr_blocks = lookup(egress.value, "ipv6_cidr_blocks", null)
@@ -45,7 +44,8 @@ variable "ingress_rules" {
       from_port   = number
       to_port     = number
       protocol    = string
-      cidr_block  = string
+      cidr_block  = list(string)
+      security_groups = list(string)
       description = string
     }))
     default     = [
@@ -53,16 +53,27 @@ variable "ingress_rules" {
           from_port   = 22
           to_port     = 22
           protocol    = "tcp"
-          cidr_block  = "1.2.3.4/32"
+          cidr_block  = ["1.2.3.4/32"]
           description = "test"
+          security_groups = []
         },
         {
           from_port   = 23
           to_port     = 23
           protocol    = "tcp"
-          cidr_block  = "1.2.3.4/32"
+          cidr_block  = ["1.2.3.4/32"]
+          description = "test"
+          security_groups = []
+        },
+        {
+          from_port   = 23
+          to_port     = 23
+          protocol    = "tcp"
+          cidr_block  = []
+          security_groups  = ["sg-0187"]
           description = "test"
         },
+
     ]
 }
 
@@ -72,7 +83,7 @@ variable "egress_rules" {
       from_port   = number
       to_port     = number
       protocol    = string
-      cidr_block  = string
+      cidr_block  = list(string)
       description = string
     }))
     default     = [
@@ -80,15 +91,26 @@ variable "egress_rules" {
           from_port   = 22
           to_port     = 22
           protocol    = "tcp"
-          cidr_block  = "1.2.3.4/32"
+          cidr_block  = ["1.2.3.4/32"]
           description = "test"
         },
         {
           from_port   = 23
           to_port     = 23
           protocol    = "tcp"
-          cidr_block  = "1.2.3.4/32"
+          cidr_block  = ["1.2.3.4/32"]
           description = "test"
         },
     ]
+}
+
+
+variable "tags" {
+  description = "A mapping of tags to assign to security group"
+  type        = map(string)
+  default     = {
+    "name" : "anish",
+    "test" : "anish"
+
+  }
 }
